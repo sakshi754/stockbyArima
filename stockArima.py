@@ -2,6 +2,7 @@ import streamlit as st
 import yfinance as yf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
 # Streamlit App Title
@@ -38,10 +39,14 @@ if st.button("Predict"):
         # Generate future dates
         future_dates = pd.date_range(start=df['Date'].iloc[-1], periods=31, freq='D')[1:]
 
-        # Display Predictions
-        predictions_df = pd.DataFrame({'Date': future_dates, 'Predicted Price': future_forecast})
-        st.write(f"Predicted Stock Prices for {ticker} (Next 30 Days):")
-        st.dataframe(predictions_df)
+        # Plot Predictions
+        plt.figure(figsize=(10, 5))
+        plt.plot(df['Date'], df['Close'], label="Historical Prices", color="blue")
+        plt.plot(future_dates, future_forecast, label="Predicted Prices", linestyle='dashed', color="red")
+        plt.xlabel("Date")
+        plt.ylabel("Stock Price")
+        plt.title(f"Stock Price Prediction for {ticker} (Next 30 Days)")
+        plt.legend()
 
-        # Optionally save the prediction data
-        predictions_df.to_csv(f"{ticker}_predictions_arima.csv", index=False)
+        # Display plot in Streamlit
+        st.pyplot(plt)
