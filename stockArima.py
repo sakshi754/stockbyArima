@@ -23,9 +23,6 @@ if st.button("Predict"):
     if df.empty:
         st.error("Invalid ticker or no data available. Please try again.")
     else:
-        df.reset_index(inplace=True)
-        df['Days'] = np.arange(len(df))
-
         # Prepare data for ARIMA
         prices = df['Close'].values
         
@@ -37,11 +34,10 @@ if st.button("Predict"):
         future_forecast = model_fit.forecast(steps=30)
         
         # Generate future dates
-        future_dates = pd.date_range(start=df['Date'].iloc[-1], periods=31, freq='D')[1:]
+        future_dates = pd.date_range(start=pd.Timestamp.today(), periods=30, freq='D')
 
-        # Plot Predictions
+        # Plot Only Future Predictions
         plt.figure(figsize=(10, 5))
-        plt.plot(df['Date'], df['Close'], label="Historical Prices", color="blue")
         plt.plot(future_dates, future_forecast, label="Predicted Prices", linestyle='dashed', color="red")
         plt.xlabel("Date")
         plt.ylabel("Stock Price")
